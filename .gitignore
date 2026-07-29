@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+
+.cache/
+candidates.json
+missing_sources.json
+
+.DS_Store

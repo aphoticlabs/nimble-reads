@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import books from '../../books.json';
+import { bookUrl } from '../lib/paths.js';
+
+const rows = books.map((b, i) => ({ ...b, rank: i + 1 }));
+---
+
+<Base
+  title="Nimble Reads — the top 1000 books in ten words each"
+  description="The top 1000 books, ranked by canon appearances and reader reach, each summarised in exactly ten words."
+>
+  <h1>Nimble Reads</h1>
+  <p class="muted">
+    The top 1000 books, each in exactly ten words. Ranked by appearances across
+    curated best-of lists and major prizes, weighted against how widely each book
+    is read.
+  </p>
+
+  <label class="visually-hidden" for="q">Search by title or author</label>
+  <input
+    id="q"
+    class="search"
+    type="search"
+    placeholder="Search by title or author…"
+    autocomplete="off"
+    spellcheck="false"
+  />
+
+  <div class="toolbar">
+    <span id="count" class="muted">{rows.length} books</span>
+    <label>
+      <input type="checkbox" id="unread-only" />
+      Unread only
+    </label>
+  </div>
+
+  <ul class="booklist" id="list">
+    {rows.map((b) => (
+      <li data-id={b.id}>
+        <a class="row" href={bookUrl(b.id)}>
+          <span class="rank">{b.rank}</span>
+          <span>
+            <span class="title">{b.title}</span><br />
+            <span class="byline">{b.author}</span>
+          </span>
+          <span>
+            <span class="tick" aria-label="Read">✓</span>
+            <span class="year">{b.year}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <p class="empty-state" id="empty" hidden>No books match that search.</p>
+</Base>
+
+<script is:inline>
+  // Runs during parse so read rows are styled before first paint. Duplicates
+  // the key from lib/read-state.js because inline scripts skip the bundler.
+  try {
+    const read = new Set(JSON.parse(localStorage.getItem('nimble-reads:read')) || []);
+    for (const li of document.querySelectorAll('#list li')) {
+      if (read.has(li.dataset.id)) li.classList.add('is-read');
+    }
+  } catch {}
+</script>
+
+<script>
+  import { getRead } from '../lib/read-state.js';
+
+  const input = document.querySelector('#q');
+  const unreadOnly = document.querySelector('#unread-only');
+  const items = [...document.querySelectorAll('#list li')];
+  const count = document.querySelector('#count');
+  const empty = document.querySelector('#empty');
+
+  const normalise = (s) =>
+    s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+
+  const keys = items.map((li) =>
+    normalise(
+      `${li.querySelector('.title').textContent} ${li.querySelector('.byline').textContent}`,
+    ),
+  );
+
+  function apply() {
+    const terms = normalise(input.value).split(/\s+/).filter(Boolean);
+    const hideRead = unreadOnly.checked;
+    let shown = 0;
+
+    items.forEach((li, i) => {
+      const matches =
+        terms.every((t) => keys[i].includes(t)) &&
+        !(hideRead && li.classList.contains('is-read'));
+      li.hidden = !matches;
+      if (matches) shown += 1;
+    });
+
+    const read = getRead().size;
+    count.textContent =
+      shown === items.length
+        ? `${items.length} books · ${read} read`
+        : `${shown} of ${items.length} · ${read} read`;
+    empty.hidden = shown > 0;
+  }
+
+  input.addEventListener('input', apply);
+  unreadOnly.addEventListener('change', apply);
+  addEventListener('pageshow', apply);
+  apply();
+</script>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .toolbar label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+  }
+</style>

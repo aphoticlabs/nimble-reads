@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import books from '../../../books.json';
+import { url, bookUrl } from '../../lib/paths.js';
+
+export function getStaticPaths() {
+  return books.map((book, i) => ({
+    params: { id: book.id },
+    props: {
+      book,
+      rank: i + 1,
+      prev: books[i - 1] ?? null,
+      next: books[i + 1] ?? null,
+    },
+  }));
+}
+
+const { book, rank, prev, next } = Astro.props;
+---
+
+<Base
+  title={`${book.title} — ${book.author} · Nimble Reads`}
+  description={book.summary || `${book.title} by ${book.author} (${book.year}).`}
+>
+  <article class="detail">
+    <p class="muted">
+      <a href={url()}>All books</a> · #{rank}
+    </p>
+
+    <h1>{book.title}</h1>
+    <p class="muted">{book.author} · {book.year}</p>
+
+    {book.summary ? (
+      <p class="summary">{book.summary}</p>
+    ) : (
+      <p class="summary empty">
+        No summary — this one could not be sourced reliably enough to write.
+      </p>
+    )}
+
+    <button class="btn" id="toggle" type="button" aria-pressed="false" data-id={book.id}>
+      Mark as read
+    </button>
+
+    <dl class="meta">
+      <dt>Rank</dt>
+      <dd>{rank} of {books.length}</dd>
+      <dt>First published</dt>
+      <dd>{book.year}</dd>
+      <dt>Open Library</dt>
+      <dd><a href={`https://openlibrary.org/works/${book.id}`}>{book.id}</a></dd>
+    </dl>
+
+    <nav class="pager">
+      {prev ? <a href={bookUrl(prev.id)}>← {prev.title}</a> : <span />}
+      {next ? <a href={bookUrl(next.id)}>{next.title} →</a> : <span />}
+    </nav>
+  </article>
+</Base>
+
+<script>
+  import { isRead, toggleRead } from '../../lib/read-state.js';
+
+  const button = document.querySelector('#toggle');
+  const id = button.dataset.id;
+
+  function render(read) {
+    button.setAttribute('aria-pressed', String(read));
+    button.textContent = read ? '✓ Read' : 'Mark as read';
+  }
+
+  button.addEventListener('click', () => render(toggleRead(id)));
+  render(isRead(id));
+</script>

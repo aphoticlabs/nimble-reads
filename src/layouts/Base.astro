@@ -1,0 +1,247 @@
+---
+import { url } from '../lib/paths.js';
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📚</text></svg>" />
+  </head>
+  <body>
+    <header>
+      <a class="wordmark" href={url()}>Nimble Reads</a>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>
+        Ranked by canon appearances and reader reach. Data from{' '}
+        <a href="https://openlibrary.org">Open Library</a>,{' '}
+        <a href="https://www.wikidata.org">Wikidata</a>, and Wikipedia.
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #fbfbfa;
+    --fg: #1a1a18;
+    --muted: #6b6b66;
+    --line: #e2e2dd;
+    --accent: #7c5cff;
+    --card: #ffffff;
+    --read: #1a7f5a;
+    --read-bg: #e7f5ee;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16161a;
+      --fg: #ececea;
+      --muted: #9a9a94;
+      --line: #2c2c33;
+      --accent: #a08cff;
+      --card: #1e1e24;
+      --read: #5ed2a0;
+      --read-bg: #17332a;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  a { color: var(--accent); }
+
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 1.25rem;
+  }
+
+  .wordmark {
+    color: var(--fg);
+    text-decoration: none;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  main {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 1.5rem 1.25rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  footer p { max-width: 52rem; margin: 0 auto; }
+
+  h1 {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.5rem;
+  }
+
+  .muted { color: var(--muted); }
+
+  .search {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--fg);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  .search:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1rem 0 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .booklist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .booklist li { border-bottom: 1px solid var(--line); }
+
+  .booklist li[hidden] { display: none; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 3rem 1fr auto;
+    gap: 0.85rem;
+    align-items: baseline;
+    padding: 0.7rem 0.4rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .row:hover { background: var(--card); }
+
+  .rank {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.85rem;
+  }
+
+  .row .title { font-weight: 550; }
+
+  .row .byline {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .year {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.85rem;
+  }
+
+  .tick {
+    color: var(--read);
+    font-weight: 700;
+    visibility: hidden;
+    margin-right: 0.4rem;
+  }
+
+  li.is-read .tick { visibility: visible; }
+  li.is-read .title { color: var(--muted); }
+
+  .btn {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--fg);
+    cursor: pointer;
+  }
+
+  .btn:hover { border-color: var(--accent); }
+
+  .btn[aria-pressed='true'] {
+    background: var(--read-bg);
+    border-color: var(--read);
+    color: var(--read);
+    font-weight: 600;
+  }
+
+  .detail .summary {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin: 1.5rem 0;
+  }
+
+  .detail .summary.empty {
+    font-size: 1rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 1.25rem;
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9rem;
+  }
+
+  .meta dt { color: var(--muted); }
+  .meta dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    font-size: 0.9rem;
+  }
+
+  .empty-state {
+    padding: 2rem 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 34rem) {
+    .row { grid-template-columns: 2.2rem 1fr auto; }
+    h1 { font-size: 1.4rem; }
+  }
+</style>

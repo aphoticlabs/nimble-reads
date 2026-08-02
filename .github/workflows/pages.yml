@@ -29,7 +29,9 @@ jobs:
 
       - run: npm run build
         env:
-          BASE_PATH: /${{ github.event.repository.name }}
+          # Served from the root of nimblereads.aphoticlabs.io, not from
+          # /<repo-name>/ as a project site would be.
+          BASE_PATH: /
 
       - uses: actions/upload-pages-artifact@v5
         with:

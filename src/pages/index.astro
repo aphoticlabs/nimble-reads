@@ -7,14 +7,12 @@ const rows = books.map((b, i) => ({ ...b, rank: i + 1 }));
 ---
 
 <Base
-  title="Nimble Reads — the top 1000 books in ten words each"
-  description="The top 1000 books, ranked by canon appearances and reader reach, each summarised in exactly ten words."
+  title="Nimble Reads — a quicker way through the world's best books"
+  description="Get through the thousand books that matter, quicker."
 >
   <h1>Nimble Reads</h1>
-  <p class="muted">
-    The top 1000 books, each in exactly ten words. Ranked by appearances across
-    curated best-of lists and major prizes, weighted against how widely each book
-    is read.
+  <p class="tagline">
+    Read the world's best books, quicker.
   </p>
 
   <label class="visually-hidden" for="q">Search by title or author</label>
@@ -120,6 +118,13 @@ const rows = books.map((b, i) => ({ ...b, rank: i + 1 }));
     overflow: hidden;
     clip: rect(0 0 0 0);
     white-space: nowrap;
+  }
+
+  .tagline {
+    font-size: 1.15rem;
+    color: var(--muted);
+    margin: 0 0 1.75rem;
+    max-width: 32rem;
   }
 
   .toolbar label {

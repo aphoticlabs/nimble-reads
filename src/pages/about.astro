@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import books from '../../books.json';
+
+const total = books.length;
+---
+
+<Base
+  title="About — Nimble Reads"
+  description="Nimble Reads is a proven method for reading the world's most important books efficiently."
+>
+  <article class="prose">
+    <h1>About</h1>
+
+    <p class="lede">
+      Nimble Reads is a proven method for working through the world's most
+      important books efficiently. It is intended for readers of serious
+      intellectual ambition who have concluded, correctly, that their present
+      rate of progress is inadequate.
+    </p>
+
+    <p>
+      The canon is larger than any individual can read, and most reading
+      capacity is lost before a book is opened — spent on titles selected by
+      proximity rather than merit, and on the indefinite deferral that follows
+      when a reading list arrives without an order of priority. Nimble Reads
+      treats reading as an allocation problem: {total} works ranked by
+      measurable standing rather than editorial preference, enough of each to
+      establish its relevance before an evening is committed to it, and a record
+      of what has been completed. Attention is finite. It should be budgeted
+      accordingly.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose {
+    max-width: 38rem;
+  }
+
+  .lede {
+    font-size: 1.15rem;
+    line-height: 1.55;
+  }
+
+  .prose p {
+    margin-bottom: 1.25rem;
+  }
+</style>

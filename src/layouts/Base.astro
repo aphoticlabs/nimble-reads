@@ -16,6 +16,9 @@ const { title, description } = Astro.props;
   <body>
     <header>
       <a class="wordmark" href={url()}>Nimble Reads</a>
+      <nav>
+        <a href={url('about.html')}>About</a>
+      </nav>
     </header>
     <main>
       <slot />
@@ -68,9 +71,20 @@ const { title, description } = Astro.props;
   a { color: var(--accent); }
 
   header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
     border-bottom: 1px solid var(--line);
     padding: 1rem 1.25rem;
   }
+
+  header nav a {
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  header nav a:hover { text-decoration: underline; }
 
   .wordmark {
     color: var(--fg);

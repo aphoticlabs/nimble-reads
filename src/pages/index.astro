@@ -10,10 +10,12 @@ const rows = books.map((b, i) => ({ ...b, rank: i + 1 }));
   title="Nimble Reads — a quicker way through the world's best books"
   description="Get through the thousand books that matter, quicker."
 >
-  <h1>Nimble Reads</h1>
-  <p class="tagline">
-    Read the world's best books, quicker.
-  </p>
+  <div class="hero">
+    <h1>Nimble Reads</h1>
+    <p class="tagline">
+      Read the world's best books, quicker.
+    </p>
+  </div>
 
   <label class="visually-hidden" for="q">Search by title or author</label>
   <input
@@ -120,10 +122,26 @@ const rows = books.map((b, i) => ({ ...b, rank: i + 1 }));
     white-space: nowrap;
   }
 
+  .hero {
+    text-align: center;
+    margin: 2.5rem 0 2.75rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.75rem, 9vw, 4.25rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    margin: 0 0 0.6rem;
+    background: linear-gradient(180deg, var(--fg), #a9a7c4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
   .tagline {
     font-size: 1.15rem;
     color: var(--muted);
-    margin: 0 0 1.75rem;
+    margin: 0 auto;
     max-width: 32rem;
   }
 

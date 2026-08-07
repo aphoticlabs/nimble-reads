@@ -7,6 +7,7 @@ const { title, description } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
+    <meta name="color-scheme" content="dark" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
@@ -35,48 +36,49 @@ const { title, description } = Astro.props;
 
 <style is:global>
   :root {
-    --bg: #fbfbfa;
-    --fg: #1a1a18;
-    --muted: #6b6b66;
-    --line: #e2e2dd;
-    --accent: #7c5cff;
-    --card: #ffffff;
-    --read: #1a7f5a;
-    --read-bg: #e7f5ee;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #16161a;
-      --fg: #ececea;
-      --muted: #9a9a94;
-      --line: #2c2c33;
-      --accent: #a08cff;
-      --card: #1e1e24;
-      --read: #5ed2a0;
-      --read-bg: #17332a;
-    }
+    color-scheme: dark;
+    --bg: #0b0c10;
+    --fg: #e9e9ee;
+    --muted: #8b8d9b;
+    --line: #23252e;
+    --accent: #a68cff;
+    --accent-soft: rgba(166, 140, 255, 0.14);
+    --card: #14161d;
+    --card-hover: #1a1d26;
+    --read: #5ed2a0;
+    --read-bg: rgba(94, 210, 160, 0.12);
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
+    min-height: 100vh;
     background: var(--bg);
+    background-image:
+      radial-gradient(60rem 32rem at 50% -14rem, rgba(166, 140, 255, 0.16), transparent 70%),
+      radial-gradient(44rem 26rem at 88% 4rem, rgba(94, 210, 160, 0.07), transparent 70%);
+    background-repeat: no-repeat;
     color: var(--fg);
-    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
     -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
   }
 
   a { color: var(--accent); }
 
   header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
     border-bottom: 1px solid var(--line);
     padding: 1rem 1.25rem;
+    background: rgba(11, 12, 16, 0.72);
+    backdrop-filter: blur(12px);
   }
 
   header nav a {
@@ -119,18 +121,22 @@ const { title, description } = Astro.props;
 
   .search {
     width: 100%;
-    padding: 0.7rem 0.9rem;
+    padding: 0.8rem 1rem;
     font-size: 1rem;
     font-family: inherit;
     color: var(--fg);
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 10px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
+  .search::placeholder { color: var(--muted); }
+
   .search:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
   .toolbar {
@@ -147,10 +153,13 @@ const { title, description } = Astro.props;
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
   }
 
-  .booklist li { border-bottom: 1px solid var(--line); }
+  .booklist li + li { border-top: 1px solid var(--line); }
 
   .booklist li[hidden] { display: none; }
 
@@ -159,12 +168,17 @@ const { title, description } = Astro.props;
     grid-template-columns: 3rem 1fr auto;
     gap: 0.85rem;
     align-items: baseline;
-    padding: 0.7rem 0.4rem;
+    padding: 0.8rem 1rem;
     text-decoration: none;
     color: inherit;
+    border-left: 2px solid transparent;
+    transition: background 0.12s ease, border-color 0.12s ease;
   }
 
-  .row:hover { background: var(--card); }
+  .row:hover {
+    background: var(--card-hover);
+    border-left-color: var(--accent);
+  }
 
   .rank {
     color: var(--muted);
@@ -198,15 +212,19 @@ const { title, description } = Astro.props;
   .btn {
     font: inherit;
     font-size: 0.9rem;
-    padding: 0.5rem 0.9rem;
-    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
     border: 1px solid var(--line);
     background: var(--card);
     color: var(--fg);
     cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
   }
 
-  .btn:hover { border-color: var(--accent); }
+  .btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
 
   .btn[aria-pressed='true'] {
     background: var(--read-bg);
@@ -215,10 +233,17 @@ const { title, description } = Astro.props;
     font-weight: 600;
   }
 
+  input[type='checkbox'] { accent-color: var(--accent); }
+
   .detail .summary {
-    font-size: 1.25rem;
-    line-height: 1.5;
+    font-size: 1.2rem;
+    line-height: 1.6;
     margin: 1.5rem 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
   }
 
   .detail .summary.empty {
